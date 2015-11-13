@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.projectspinoza.ontology.util.DataLoader;
-import org.projectspinoza.ontology.util.Relation;
+import org.projectspinoza.ontology.util.MatchedTerm;
 import org.projectspinoza.ontology.util.Term;
 
 public class TermOntologyMatcher {
@@ -18,18 +18,18 @@ public class TermOntologyMatcher {
 	
 	private String tweetsPath;
 	private String ontologiesPath;
-	private List<Relation> matches;
+	private List<MatchedTerm> matches;
 	
 	public TermOntologyMatcher(){}
 	public TermOntologyMatcher(String tweetsPath, String ontologiesPath){
 		this.tweetsPath = tweetsPath;
 		this.ontologiesPath = ontologiesPath;
 	}
-	public List<Relation> matchTerms(){	
+	public List<MatchedTerm> matchTerms(){	
 		List<String> tweetTags = DataLoader.fetchTags(tweetsPath);
 		List<Map<String, String>> ontologies = DataLoader.fetchOntologies(ontologiesPath);
 
-		matches = new ArrayList<Relation>();
+		matches = new ArrayList<MatchedTerm>();
 		for(Map<String, String> ontology : ontologies){
 			String ontoTagsString = ontology.get("Tag").toLowerCase();
 			String[] ontoTags = ontoTagsString.split(" ");
@@ -57,10 +57,10 @@ public class TermOntologyMatcher {
 	public void setOntologiesPath(String ontologiesPath) {
 		this.ontologiesPath = ontologiesPath;
 	}
-	public List<Relation> getMatches() {
+	public List<MatchedTerm> getMatches() {
 		return matches;
 	}
-	public void setMatches(List<Relation> matches) {
+	public void setMatches(List<MatchedTerm> matches) {
 		this.matches = matches;
 	}
 	public void addToRelation(String term, Map<String, String> ontology){
@@ -70,7 +70,7 @@ public class TermOntologyMatcher {
 				return;
 			}
 		}
-		Relation relation = new Relation(new Term(ontology.get("Parent").trim()));
+		MatchedTerm relation = new MatchedTerm(new Term(ontology.get("Parent").trim()));
 		relation.addChild(new Term(term, ontology.get("Title"), ontology.get("Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
 		matches.add(relation);
 	}
@@ -83,7 +83,7 @@ public class TermOntologyMatcher {
 			fw = new FileWriter(new File(results));
 			sb.append("{\"results\":[");
 			for(int i=0; i<matches.size(); i++){
-				Relation relation = matches.get(i);
+				MatchedTerm relation = matches.get(i);
 				sb.append("{\"parent\":\""+relation.getParent().getTerm()+"\"");
 				sb.append(",\"childs\":[");
 				int numChilds = relation.getChilds().size();
