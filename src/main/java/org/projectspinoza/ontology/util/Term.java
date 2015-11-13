@@ -8,23 +8,30 @@ public class Term {
 	
 	private String title;
 	private String term;
-	public String getTerm() {
-		return term;
-	}
-	public void setTerm(String term) {
-		this.term = term;
-	}
-
+	private String tags;
 	private String description;
 	
 	public Term(){}
 	public Term(String term){
 		this.term = term;
 	}
-	public Term(String term, String title, String description){
+	public Term(String term, String title, String description, String tags){
 		this.term = term;
 		this.title = title;
 		this.description = description;
+		this.tags = tags;
+	}
+	public String getTags(){
+		return this.tags;
+	}
+	public void setTags(String tags){
+		this.tags = tags;
+	}
+	public String getTerm() {
+		return term;
+	}
+	public void setTerm(String term) {
+		this.term = term;
 	}
 	public String getTitle() {
 		return title;

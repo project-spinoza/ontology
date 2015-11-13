@@ -25,27 +25,20 @@ public class TermOntologyMatcher {
 		this.tweetsPath = tweetsPath;
 		this.ontologiesPath = ontologiesPath;
 	}
-	
-	public List<Relation> matchTerms(){
-		
-		List<String> tweetTags = new ArrayList<String>();
-		tweetTags.add("honda");
-		tweetTags.add("hyundai");
-		tweetTags.add("ferrari");
-		tweetTags.add("love");
-		tweetTags.add("iphone");
-		tweetTags.add("obama");
-		tweetTags.add("reading");
-		
-		//List<String> tweetTags = DataLoader.fetchTags(tweetsPath);
+	public List<Relation> matchTerms(){	
+		List<String> tweetTags = DataLoader.fetchTags(tweetsPath);
 		List<Map<String, String>> ontologies = DataLoader.fetchOntologies(ontologiesPath);
 
 		matches = new ArrayList<Relation>();
 		for(Map<String, String> ontology : ontologies){
-			String ontoTags = ontology.get("Tag");
-			for(String tag : tweetTags){
-				if(ontoTags.toLowerCase().matches(".*?\\b"+tag+"\\b.*?")){
-					addToRelation(tag, ontology);
+			String ontoTagsString = ontology.get("Tag").toLowerCase();
+			String[] ontoTags = ontoTagsString.split(" ");
+			for(String ontoTag : ontoTags){
+				ontoTag = ontoTag.replaceAll(",", "").trim();
+				for(String tag : tweetTags){
+					if(ontoTag.equals(tag)){
+						addToRelation(tag, ontology);
+					}
 				}
 			}
 		}
@@ -73,12 +66,12 @@ public class TermOntologyMatcher {
 	public void addToRelation(String term, Map<String, String> ontology){
 		for(int i = 0; i < matches.size(); i++){
 			if(matches.get(i).getParent().getTerm().equals(ontology.get("Parent").trim())){
-				matches.get(i).addChild(new Term(term, ontology.get("Title"), ontology.get("Body").replaceAll("[\r\n]+", "")));
+				matches.get(i).addChild(new Term(term, ontology.get("Title"), ontology.get("Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
 				return;
 			}
 		}
 		Relation relation = new Relation(new Term(ontology.get("Parent").trim()));
-		relation.addChild(new Term(term, ontology.get("Title"), ontology.get("Body").replaceAll("[\r\n]+", "")));
+		relation.addChild(new Term(term, ontology.get("Title"), ontology.get("Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
 		matches.add(relation);
 	}
 	public void printTestMatched(){
@@ -99,7 +92,9 @@ public class TermOntologyMatcher {
 					sb.append("{");
 					sb.append("\"term\":\""+child.getTerm()+"\",");
 					sb.append("\"title\":\""+child.getTitle()+"\",");
-					sb.append("\"description\":\""+child.getDescription().replaceAll("\"", "")+"\"");
+					//sb.append("\"description\":\""+child.getDescription().replaceAll("\"", "")+"\",");
+					sb.append("\"description\":\"...\",");
+					sb.append("\"tags\":\""+child.getTags()+"\"");
 					sb.append("}");
 					if( j < (numChilds-1)){
 						sb.append(",");
