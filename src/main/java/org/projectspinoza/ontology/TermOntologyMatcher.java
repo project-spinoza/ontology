@@ -21,7 +21,7 @@ public class TermOntologyMatcher {
 	private List<MatchedTerm> matches;
 	
 	public TermOntologyMatcher(){}
-	public TermOntologyMatcher(String tweetsPath, String ontologiesPath){
+	public TermOntologyMatcher(String tweetsPath, String ontologiesPath) {
 		this.tweetsPath = tweetsPath;
 		this.ontologiesPath = ontologiesPath;
 	}
@@ -30,7 +30,7 @@ public class TermOntologyMatcher {
 		List<Map<String, String>> ontologies = DataLoader.fetchOntologies(ontologiesPath);
 
 		matches = new ArrayList<MatchedTerm>();
-		for(Map<String, String> ontology : ontologies){
+		for(Map<String, String> ontology : ontologies) {
 			String ontoTagsString = ontology.get("Tag").toLowerCase();
 			String[] ontoTags = ontoTagsString.split(" ");
 			for(String ontoTag : ontoTags){
@@ -63,7 +63,7 @@ public class TermOntologyMatcher {
 	public void setMatches(List<MatchedTerm> matches) {
 		this.matches = matches;
 	}
-	public void addToRelation(String term, Map<String, String> ontology){
+	public void addToRelation(String term, Map<String, String> ontology) {
 		for(int i = 0; i < matches.size(); i++){
 			if(matches.get(i).getParent().getTerm().equals(ontology.get("Parent").trim())){
 				matches.get(i).addChild(new Term(term, ontology.get("Title"), ontology.get("Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
@@ -74,7 +74,7 @@ public class TermOntologyMatcher {
 		relation.addChild(new Term(term, ontology.get("Title"), ontology.get("Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
 		matches.add(relation);
 	}
-	public void printTestMatched(){
+	public void printTestMatched() {
 		String results = "results.txt";
 		log.debug("matched ["+matches.size()+"]");
 		FileWriter fw = null;
