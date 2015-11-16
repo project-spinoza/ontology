@@ -38,6 +38,7 @@ public class TermOntologyMatcher {
 				for(String tag : tweetTags){
 					if(ontoTag.equals(tag)){
 						addToRelation(tag, ontology);
+						log.debug(tag+", matched with: "+ontoTag+ "["+ontology.get("Parent")+"]");
 					}
 				}
 			}
