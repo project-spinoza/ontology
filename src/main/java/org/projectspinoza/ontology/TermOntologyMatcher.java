@@ -25,7 +25,7 @@ public class TermOntologyMatcher {
 		this.tweetsPath = tweetsPath;
 		this.ontologiesPath = ontologiesPath;
 	}
-	public List<MatchedTerm> matchTerms(){	
+	public List<MatchedTerm> matchTerms() {	
 		List<String> tweetTags = DataLoader.fetchTags(tweetsPath);
 		List<Map<String, String>> ontologies = DataLoader.fetchOntologies(ontologiesPath);
 

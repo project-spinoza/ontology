@@ -1,2 +1,8 @@
-2015-11-12 11:07:12.683 [main] INFO   - Initializing ontologies!
-2015-11-12 11:07:12.691 [main] INFO   - Done
+2015-11-16 14:07:07.638 [main] INFO   - Initializing ontologies!
+2015-11-16 14:07:07.685 [main] INFO   - Rows loaded from tweets.txt[1500]
+2015-11-16 14:07:09.716 [main] INFO   - HashTags Loaded [1081]
+2015-11-16 14:07:09.796 [main] INFO   - Rows loaded from ontologies.json[1]
+2015-11-16 14:07:09.842 [main] INFO   - Ontologies Loaded [5431]
+2015-11-16 14:07:10.764 [main] DEBUG  - matched [63]
+2015-11-16 14:07:10.764 [main] INFO   - Results are stored in [results.txt]
+2015-11-16 14:07:10.764 [main] INFO   - Done!
