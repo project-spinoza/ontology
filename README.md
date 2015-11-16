@@ -1,4 +1,4 @@
-# ontology
+# Ontology
 Ontology is a collection of hierarchal data, collected from different sources. This data can be used for different purposes. Like analyzing tweets and against ontologies. Data is mainly categorized into following categories.
 
 Car
