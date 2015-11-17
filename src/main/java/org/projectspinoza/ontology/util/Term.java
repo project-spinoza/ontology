@@ -1,15 +1,14 @@
 package org.projectspinoza.ontology.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class Term {
-	private static Logger log = LogManager.getRootLogger();
+//	private static Logger log = LogManager.getRootLogger();
 	
 	private String title;
 	private String term;
-	private String tags;
+		private String tags;
 	private String description;
+	private int frequency = 1;
 	
 	public Term(){}
 	public Term(String term){
@@ -45,7 +44,12 @@ public class Term {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+	public int getFrequency() {
+		return frequency;
+	}
+	public void incrementFrequency(){
+		frequency++;
+	}
 	@Override
 	public String toString(){
 		return "term["+term+"], title["+title+"], description["+description+"]";

@@ -32,9 +32,10 @@ public class TermOntologyMatcher {
 		matches = new ArrayList<MatchedTerm>();
 		for(Map<String, String> ontology : ontologies) {
 			String ontoTagsString = ontology.get("Tag").toLowerCase();
-			String[] ontoTags = ontoTagsString.split(" ");
+			String[] ontoTags = ontoTagsString.split(",");
 			for(String ontoTag : ontoTags){
-				ontoTag = ontoTag.replaceAll(",", "").trim();
+				//ontoTag = ontoTag.replaceAll(",", "").trim();
+				ontoTag = ontoTag.trim();
 				for(String tag : tweetTags){
 					if(ontoTag.equals(tag)){
 						addToRelation(tag, ontology);
@@ -95,7 +96,8 @@ public class TermOntologyMatcher {
 					sb.append("\"title\":\""+child.getTitle()+"\",");
 					//sb.append("\"description\":\""+child.getDescription().replaceAll("\"", "")+"\",");
 					sb.append("\"description\":\"...\",");
-					sb.append("\"tags\":\""+child.getTags()+"\"");
+					sb.append("\"tags\":\""+child.getTags()+"\",");
+					sb.append("\"frequency\":\""+child.getFrequency()+"\"");
 					sb.append("}");
 					if( j < (numChilds-1)){
 						sb.append(",");

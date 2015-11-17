@@ -12,7 +12,7 @@ public class Main {
     public static void main( String[] args )
     {
         log.info( "Initializing ontologies!" );
-        (new TermOntologyMatcher("tweets.txt", "ontologies.json")).matchTerms();
+        (new TermOntologyMatcher("tweetsData.txt", "ontologiesData.json")).matchTerms();
         log.info( "Done!" );
     }
 }
