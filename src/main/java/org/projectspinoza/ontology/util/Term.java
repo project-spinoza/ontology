@@ -6,10 +6,9 @@ public class Term {
 	
 	private String title;
 	private String term;
-		private String tags;
+	private String tags;
 	private String description;
 	private int frequency = 1;
-	private int test;
 	
 	public Term(){}
 	public Term(String term){
