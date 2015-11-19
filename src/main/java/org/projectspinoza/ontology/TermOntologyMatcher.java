@@ -19,7 +19,7 @@ public class TermOntologyMatcher {
 	private String tweetsPath;
 	private String ontologiesPath;
 	private List<MatchedTerm> matches;
-
+	
 	public TermOntologyMatcher() {
 	}
 
@@ -35,45 +35,33 @@ public class TermOntologyMatcher {
 		matches = new ArrayList<MatchedTerm>();
 		for (String tag : tweetTags) {
 			int rootCounter = 0;
-			log.debug("================================================================");
-			log.debug("MATCHING TERM: " + tag);
-			log.debug("================================================================");
 			for (Map<String, String> ontology : ontologies) {
 				String ontoTagsString = ontology.get("Tag").toLowerCase();
-				String[] ontoTags = ontoTagsString.replaceAll(" " , "").split(",");
+				String[] ontoTags = ontoTagsString.replaceAll(" ", "").split(
+						",");
 				for (String ontoTag : ontoTags) {
 					if (ontoTag.equals(tag)) {
 						rootCounter++;
 						addToRelation(tag, ontology);
-						log.debug(tag + ", matched with: " + ontoTag + "["
-								+ ontology.get("Parent") + "]");
+						
 					}
 				}
 			}
-			if(rootCounter == 0){
-				System.err.println(tag +" not Matched");
-			}else{
-				System.err.println(tag +" Root Frequency :"+ rootCounter);
-			}
-		}
-		/*for (Map<String, String> ontology : ontologies) {
-			String ontoTagsString = ontology.get("Tag").toLowerCase();
-			String[] ontoTags = ontoTagsString.split(",");
-			for (String ontoTag : ontoTags) {
-				// ontoTag = ontoTag.replaceAll(",", "").trim();
-				ontoTag = ontoTag.trim();
-				for (String tag : tweetTags) {
-					if (ontoTag.equals(tag)) {
-						addToRelation(tag, ontology);
-						log.debug(tag + ", matched with: " + ontoTag + "["
-								+ ontology.get("Parent") + "]");
+			log.debug("================================================================");
+			log.debug(tag + ", matched "+ rootCounter+" times");
+			log.debug("================================================================");
+			
+			for (int i = 0; i < matches.size(); i++) {
+				for (int j = 0; j < matches.get(i).getChilds().size(); j++) {
+					if (matches.get(i).getChilds().get(j).getTerm().equals(tag)) {
+						matches.get(i).getChilds().get(j)
+								.setOverAllFrequency(rootCounter);
 					}
 				}
 			}
 		}
-		overAllFrequencies();*/
-		printTestMatched();
 
+		printTestMatched();
 		return null;
 	}
 
@@ -109,14 +97,6 @@ public class TermOntologyMatcher {
 						new Term(term, ontology.get("Title"), ontology.get(
 								"Body").replaceAll("[\r\n]+", ""), ontology
 								.get("Tag")));
-				// overAllFrequency chek up
-//				for (int j = 0; j < matches.get(i).getChilds().size(); j++) {
-//					if (matches.get(i).getChilds().get(j).getTerm()
-//							.equals(term)) {
-//						matches.get(i).getChilds().get(j)
-//								.incrementoverAllFrequency();
-//					}
-//				}
 				return;
 			}
 		}
@@ -126,27 +106,7 @@ public class TermOntologyMatcher {
 				"Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
 		matches.add(relation);
 	}
-/*
-	public void overAllFrequencies() {
 
-		Map<String, Integer> overAllFreq = new HashMap<String, Integer>();
-		Integer freq = null;
-		for (int i = 0; i < matches.size(); i++) {
-			for (Term term : matches.get(i).getChilds()) {
-					freq = overAllFreq.get(term.getTerm());
-					if (freq != null) {
-						freq += term.getFrequency();
-						term.setOverAllFrequency(freq);
-					} else {
-						freq = term.getFrequency();
-						term.setOverAllFrequency(freq);
-					}
-				overAllFreq.put(term.getTerm(), freq);
-			}
-			//System.out.println(overAllFreq.toString());
-		}
-	}
-*/
 	public void printTestMatched() {
 		String results = "results.txt";
 		log.debug("matched [" + matches.size() + "]");
@@ -166,8 +126,6 @@ public class TermOntologyMatcher {
 					sb.append("{");
 					sb.append("\"term\":\"" + child.getTerm() + "\",");
 					sb.append("\"title\":\"" + child.getTitle() + "\",");
-					// sb.append("\"description\":\""+child.getDescription().replaceAll("\"",
-					// "")+"\",");
 					sb.append("\"description\":\"...\",");
 					sb.append("\"tags\":\"" + child.getTags() + "\",");
 					sb.append("\"frequency\":\"" + child.getFrequency() + "\",");

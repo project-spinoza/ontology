@@ -39,7 +39,7 @@ public class MatchedTerm {
 			childs.add(child);
 		}
 	}
-
+	
 	public boolean contains(Term child) {
 		for (Term oldChild : childs) {
 			if (oldChild.getTerm().equalsIgnoreCase(child.getTerm())) {
@@ -49,7 +49,6 @@ public class MatchedTerm {
 		}
 		return false;
 	}
-
 	@Override
 	public String toString() {
 		return "parent[" + parent + "], childs[" + childs + "]";

@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +33,7 @@ public class DataLoader {
 				data.add(line);
 				counter++;
 			}
-			log.info("Rows loaded from "+filePath+"[" + counter + "]");
+			log.info("Rows loaded from " + filePath + "[" + counter + "]");
 			br.close();
 		} catch (IOException ex) {
 			log.error("Error while reading file [" + filePath + "]");
@@ -47,8 +49,9 @@ public class DataLoader {
 		}
 		return data;
 	}
+
 	public static List<String> fetchTags(String filePath) {
-		List<String> tags = new ArrayList<String>();
+		Set<String> tags = new HashSet<String>();
 		List<String> data = loadData(filePath);
 		int tagCounter = 0;
 		if (data == null || data.isEmpty()) {
@@ -57,7 +60,9 @@ public class DataLoader {
 		}
 		for (String row : data) {
 			String tweetText = fetchTweetText(row);
-			if(tweetText == null || tweetText.length()<3){continue;}
+			if (tweetText == null || tweetText.length() < 3) {
+				continue;
+			}
 			String[] terms = tweetText.split(" ");
 			if (terms.length == 0) {
 				continue;
@@ -70,16 +75,17 @@ public class DataLoader {
 				if (term.length() < 2) {
 					continue;
 				}
-				;
+
 				if (term.startsWith("#")) {
-					int numHashs = term.length() - term.replaceAll("#", "").length();
-					if(numHashs == 1){
+					int numHashs = term.length()
+							- term.replaceAll("#", "").length();
+					if (numHashs == 1) {
 						tags.add(term.substring(1));
 						tagCounter++;
-					}else if (numHashs > 1){
+					} else if (numHashs > 1) {
 						String[] jointTerms = term.split("#");
-						for(String jointTerm : jointTerms){
-							if(jointTerm.length() > 0){
+						for (String jointTerm : jointTerms) {
+							if (jointTerm.length() > 0) {
 								tags.add(jointTerm);
 								tagCounter++;
 							}
@@ -89,11 +95,11 @@ public class DataLoader {
 			}
 		}
 		log.info("HashTags Loaded [" + tagCounter + "]");
-		return tags;
+		return new ArrayList<String>(tags);
 	}
 
 	public static List<Map<String, String>> fetchOntologies(String filePath) {
-		List<String> listJson = loadData(filePath); 
+		List<String> listJson = loadData(filePath);
 		String json = listJson.size() == 1 ? listJson.get(0) : null;
 		List<Map<String, String>> ontologies = new ArrayList<Map<String, String>>();
 		ObjectMapper mapper = new ObjectMapper();
@@ -101,14 +107,15 @@ public class DataLoader {
 			ontologies = mapper.readValue(json,
 					new TypeReference<ArrayList<Map<String, String>>>() {
 					});
-			log.info("Ontologies Loaded ["+ontologies.size()+"]");
+			log.info("Ontologies Loaded [" + ontologies.size() + "]");
 		} catch (Exception e) {
-			log.error("Cannot fetch ontologies from ["+filePath);
+			log.error("Cannot fetch ontologies from [" + filePath);
 			e.printStackTrace();
 		}
 		return ontologies;
 	}
-	public static String fetchTweetText(String json){
+
+	public static String fetchTweetText(String json) {
 		Map<String, Object> map = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -116,10 +123,12 @@ public class DataLoader {
 					new TypeReference<Map<String, Object>>() {
 					});
 		} catch (Exception e) {
-			log.error("Cannot convert to map ["+json);
+			log.error("Cannot convert to map [" + json);
 			e.printStackTrace();
 		}
-		if(map == null){return null;}
+		if (map == null) {
+			return null;
+		}
 		return map.get("text").toString();
 	}
 }
