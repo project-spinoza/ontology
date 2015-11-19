@@ -9,6 +9,7 @@ public class Term {
 		private String tags;
 	private String description;
 	private int frequency = 1;
+	private int overAllFrequency = 1;
 	
 	public Term(){}
 	public Term(String term){
@@ -49,6 +50,15 @@ public class Term {
 	}
 	public void incrementFrequency(){
 		frequency++;
+	}
+	public void setOverAllFrequency(int overAllFrequency) {
+		this.overAllFrequency = overAllFrequency;
+	}
+	public int getOverAllFrequency() {
+		return overAllFrequency;
+	}
+	public void incrementoverAllFrequency(){
+		overAllFrequency++;
 	}
 	@Override
 	public String toString(){

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MatchedTerm {
-	// private static Logger log = LogManager.getRootLogger();
 
 	private Term parent;
 	private List<Term> childs;
