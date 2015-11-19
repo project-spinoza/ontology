@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,19 +34,26 @@ public class TermOntologyMatcher {
 				.fetchOntologies(ontologiesPath);
 		matches = new ArrayList<MatchedTerm>();
 		for (String tag : tweetTags) {
+			int rootCounter = 0;
 			log.debug("================================================================");
 			log.debug("MATCHING TERM: " + tag);
 			log.debug("================================================================");
 			for (Map<String, String> ontology : ontologies) {
 				String ontoTagsString = ontology.get("Tag").toLowerCase();
-				String[] ontoTags = ontoTagsString.split(",");
+				String[] ontoTags = ontoTagsString.replaceAll(" " , "").split(",");
 				for (String ontoTag : ontoTags) {
 					if (ontoTag.equals(tag)) {
+						rootCounter++;
 						addToRelation(tag, ontology);
 						log.debug(tag + ", matched with: " + ontoTag + "["
 								+ ontology.get("Parent") + "]");
 					}
 				}
+			}
+			if(rootCounter == 0){
+				System.err.println(tag +" not Matched");
+			}else{
+				System.err.println(tag +" Root Frequency :"+ rootCounter);
 			}
 		}
 		/*for (Map<String, String> ontology : ontologies) {
@@ -65,8 +71,8 @@ public class TermOntologyMatcher {
 				}
 			}
 		}
-		overAllFrequencies();
-		printTestMatched();*/
+		overAllFrequencies();*/
+		printTestMatched();
 
 		return null;
 	}
@@ -104,11 +110,13 @@ public class TermOntologyMatcher {
 								"Body").replaceAll("[\r\n]+", ""), ontology
 								.get("Tag")));
 				// overAllFrequency chek up
-				// for(int j=0; j< matches.get(i).getChilds().size(); j++){
-				// if(matches.get(i).getChilds().get(j).getTerm().equals(term)){
-				// matches.get(i).getChilds().get(j).incrementoverAllFrequency();
-				// }
-				// }
+//				for (int j = 0; j < matches.get(i).getChilds().size(); j++) {
+//					if (matches.get(i).getChilds().get(j).getTerm()
+//							.equals(term)) {
+//						matches.get(i).getChilds().get(j)
+//								.incrementoverAllFrequency();
+//					}
+//				}
 				return;
 			}
 		}
@@ -118,7 +126,7 @@ public class TermOntologyMatcher {
 				"Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
 		matches.add(relation);
 	}
-
+/*
 	public void overAllFrequencies() {
 
 		Map<String, Integer> overAllFreq = new HashMap<String, Integer>();
@@ -138,7 +146,7 @@ public class TermOntologyMatcher {
 			//System.out.println(overAllFreq.toString());
 		}
 	}
-
+*/
 	public void printTestMatched() {
 		String results = "results.txt";
 		log.debug("matched [" + matches.size() + "]");
