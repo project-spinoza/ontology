@@ -62,6 +62,6 @@ public class Term {
 	}
 	@Override
 	public String toString(){
-		return "term["+term+"], title["+title+"], description["+description+"]";
+		return "term["+term+"], title["+title+"], description[...], frequency["+frequency+"], overallFrequency["+overAllFrequency+"]";
 	}
 }

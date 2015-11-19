@@ -34,7 +34,23 @@ public class TermOntologyMatcher {
 		List<Map<String, String>> ontologies = DataLoader
 				.fetchOntologies(ontologiesPath);
 		matches = new ArrayList<MatchedTerm>();
-		for (Map<String, String> ontology : ontologies) {
+		for (String tag : tweetTags) {
+			log.debug("================================================================");
+			log.debug("MATCHING TERM: " + tag);
+			log.debug("================================================================");
+			for (Map<String, String> ontology : ontologies) {
+				String ontoTagsString = ontology.get("Tag").toLowerCase();
+				String[] ontoTags = ontoTagsString.split(",");
+				for (String ontoTag : ontoTags) {
+					if (ontoTag.equals(tag)) {
+						addToRelation(tag, ontology);
+						log.debug(tag + ", matched with: " + ontoTag + "["
+								+ ontology.get("Parent") + "]");
+					}
+				}
+			}
+		}
+		/*for (Map<String, String> ontology : ontologies) {
 			String ontoTagsString = ontology.get("Tag").toLowerCase();
 			String[] ontoTags = ontoTagsString.split(",");
 			for (String ontoTag : ontoTags) {
@@ -50,7 +66,7 @@ public class TermOntologyMatcher {
 			}
 		}
 		overAllFrequencies();
-		printTestMatched();
+		printTestMatched();*/
 
 		return null;
 	}
