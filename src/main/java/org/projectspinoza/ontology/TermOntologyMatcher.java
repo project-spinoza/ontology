@@ -113,7 +113,7 @@ public class TermOntologyMatcher {
 
 	public void printTestMatched(int matchedCount) {
 		String results = "results.txt";
-//		log.debug("matched [" + matchedCount + "]");
+		log.info("matched [" + matchedCount + "]");
 		FileWriter fw = null;
 		StringBuilder sb = new StringBuilder();
 		try {
@@ -130,9 +130,6 @@ public class TermOntologyMatcher {
 					sb.append("{");
 					sb.append("\"term\":\"" + child.getTerm() + "\",");
 					sb.append("\"title\":\"" + child.getTitle() + "\",");
-//					int desLength = child.getDescription().length() < 80 ? child
-//							.getDescription().length() : 32;
-
 					sb.append("\"description\":\"...\",");
 					sb.append("\"tags\":\"" + child.getTags() + "\",");
 					sb.append("\"frequency\":\"" + child.getFrequency() + "\",");
@@ -149,10 +146,10 @@ public class TermOntologyMatcher {
 				}
 			}
 			sb.append("],\"not_matched\":[");
-			int unmatched_size = not_matched.size();
-			for (int i = 0; i < unmatched_size; i++) {
+			int unmatchedCount = not_matched.size();
+			for (int i = 0; i < unmatchedCount; i++) {
 				String comma = ",";
-				if (i == unmatched_size - 1) {
+				if (i == unmatchedCount - 1) {
 					comma = "";
 				}
 				sb.append("\"" + not_matched.get(i) + "\"" + comma);
@@ -160,28 +157,24 @@ public class TermOntologyMatcher {
 			sb.append("]}");
 			fw.write(sb.toString());
 			fw.close();
-			log.debug(matchedCount+" matched Tags");
-			log.info(unmatched_size+" Un Matched Tags");
-//			int total = matchedCount + unmatched_size;
-//			log.info(total+" total Tags");
-//		//	double percentage = 0.0;
-//			if (matchedCount != 0) {
-//				double percentage = (matchedCount / (matchedCount + unmatched_size)) * 100;
-//				log.debug(percentage+"% tags matched");
-//			}
-			
+
+			float total = matchedCount + unmatchedCount;
+			float percentage = 0.0F;
+			if (total != 0) {
+				percentage = (matchedCount * 100.0F / total);
+				log.info(String.format("%.2f", percentage) + "% tags matched");
+			}
 			log.info("Results are stored in [" + results + "]");
 		} catch (IOException ex) {
-
+			ex.printStackTrace();
 		} finally {
 			try {
 				if (fw != null) {
 					fw.close();
 				}
 			} catch (IOException ex) {
-
+				ex.printStackTrace();
 			}
 		}
-
 	}
 }
