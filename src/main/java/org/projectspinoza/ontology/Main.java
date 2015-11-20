@@ -16,7 +16,7 @@ public class Main {
 			System.exit(0);
 		}
 		log.info("Initializing ontologies!");
-		(new TermOntologyMatcher("tweets.txt", "ontologies.json")).matchTerms();
+		(new TermOntologyMatcher(args[0], args[1])).matchTerms();
 		log.info("Done!");
 	}
 }
