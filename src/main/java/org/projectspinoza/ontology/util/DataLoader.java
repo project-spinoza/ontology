@@ -53,7 +53,6 @@ public class DataLoader {
 	public static List<String> fetchTags(String filePath) {
 		Set<String> tags = new HashSet<String>();
 		List<String> data = loadData(filePath);
-		int tagCounter = 0;
 		if (data == null || data.isEmpty()) {
 			log.error("No tags are found in [" + filePath + "]");
 			return null;
@@ -75,26 +74,24 @@ public class DataLoader {
 				if (term.length() < 2) {
 					continue;
 				}
-
 				if (term.startsWith("#")) {
 					int numHashs = term.length()
 							- term.replaceAll("#", "").length();
 					if (numHashs == 1) {
 						tags.add(term.substring(1));
-						tagCounter++;
+			
 					} else if (numHashs > 1) {
 						String[] jointTerms = term.split("#");
 						for (String jointTerm : jointTerms) {
 							if (jointTerm.length() > 0) {
 								tags.add(jointTerm);
-								tagCounter++;
 							}
 						}
 					}
 				}
 			}
 		}
-		log.info("HashTags Loaded [" + tagCounter + "]");
+		log.info("HashTags Loaded [" + tags.size() + "]");
 		return new ArrayList<String>(tags);
 	}
 

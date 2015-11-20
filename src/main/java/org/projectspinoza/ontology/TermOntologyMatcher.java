@@ -19,16 +19,19 @@ public class TermOntologyMatcher {
 	private String tweetsPath;
 	private String ontologiesPath;
 	private List<MatchedTerm> matches;
-	
+	public List<String> not_matched ;
+
 	public TermOntologyMatcher() {
 	}
 
 	public TermOntologyMatcher(String tweetsPath, String ontologiesPath) {
 		this.tweetsPath = tweetsPath;
 		this.ontologiesPath = ontologiesPath;
+		not_matched = new ArrayList<String>();
 	}
 
 	public List<MatchedTerm> matchTerms() {
+		int matchedCount = 0;
 		List<String> tweetTags = DataLoader.fetchTags(tweetsPath);
 		List<Map<String, String>> ontologies = DataLoader
 				.fetchOntologies(ontologiesPath);
@@ -43,14 +46,11 @@ public class TermOntologyMatcher {
 					if (ontoTag.equals(tag)) {
 						rootCounter++;
 						addToRelation(tag, ontology);
-						
 					}
 				}
 			}
-			log.debug("================================================================");
-			log.debug(tag + ", matched "+ rootCounter+" times");
-			log.debug("================================================================");
-			
+			log.debug(tag + ", matched " + rootCounter + " times");
+
 			for (int i = 0; i < matches.size(); i++) {
 				for (int j = 0; j < matches.get(i).getChilds().size(); j++) {
 					if (matches.get(i).getChilds().get(j).getTerm().equals(tag)) {
@@ -59,9 +59,13 @@ public class TermOntologyMatcher {
 					}
 				}
 			}
+			if(rootCounter == 0){
+				not_matched.add(tag);	
+			}else{
+				matchedCount++;
+			}
 		}
-
-		printTestMatched();
+		printTestMatched(matchedCount);
 		return null;
 	}
 
@@ -107,14 +111,14 @@ public class TermOntologyMatcher {
 		matches.add(relation);
 	}
 
-	public void printTestMatched() {
+	public void printTestMatched(int matchedCount) {
 		String results = "results.txt";
-		log.debug("matched [" + matches.size() + "]");
+		log.debug("matched [" + matchedCount + "]");
 		FileWriter fw = null;
 		StringBuilder sb = new StringBuilder();
 		try {
 			fw = new FileWriter(new File(results));
-			sb.append("{\"results\":[");
+			sb.append("{\"matched\":[");
 			for (int i = 0; i < matches.size(); i++) {
 				MatchedTerm relation = matches.get(i);
 				sb.append("{\"parent\":\"" + relation.getParent().getTerm()
@@ -126,7 +130,9 @@ public class TermOntologyMatcher {
 					sb.append("{");
 					sb.append("\"term\":\"" + child.getTerm() + "\",");
 					sb.append("\"title\":\"" + child.getTitle() + "\",");
-					sb.append("\"description\":\"...\",");
+					int desLength = child.getDescription().length()<80 ? child.getDescription().length(): 32;
+	
+					sb.append("\"description\":\""+child.getDescription().substring(0,desLength)+"...\",");
 					sb.append("\"tags\":\"" + child.getTags() + "\",");
 					sb.append("\"frequency\":\"" + child.getFrequency() + "\",");
 					sb.append("\"overAllFrequency\":\""
@@ -141,9 +147,19 @@ public class TermOntologyMatcher {
 					sb.append(",");
 				}
 			}
+			sb.append("],\"not_matched\":[");
+			int tags_size = not_matched.size();
+			for(int i=0; i < tags_size; i++){
+				String comma = ",";
+				if(i == tags_size -1){
+					comma = "";
+				}
+				sb.append("\""+ not_matched.get(i) +"\""+comma);
+			}
 			sb.append("]}");
 			fw.write(sb.toString());
 			fw.close();
+			log.info("Un Matched Tags " + tags_size );
 			log.info("Results are stored in [" + results + "]");
 		} catch (IOException ex) {
 
@@ -156,5 +172,6 @@ public class TermOntologyMatcher {
 
 			}
 		}
+
 	}
 }
