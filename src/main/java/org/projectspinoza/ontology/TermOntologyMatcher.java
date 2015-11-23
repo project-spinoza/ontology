@@ -161,7 +161,7 @@ public class TermOntologyMatcher {
 			float total = matchedCount + unmatchedCount;
 			float percentage = 0.0F;
 			if (total != 0) {
-				percentage = (matchedCount * 100.0F / total);
+				percentage = ((matchedCount * 100.0F) / total);
 				log.info(String.format("%.2f", percentage) + "% tags matched");
 			}
 			log.info("Results are stored in [" + results + "]");
