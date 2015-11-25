@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.projectspinoza.ontology.util.DataLoader;
 import org.projectspinoza.ontology.util.MatchedTerm;
 import org.projectspinoza.ontology.util.Term;
@@ -65,6 +66,7 @@ public class TermOntologyMatcher {
 				matchedCount++;
 			}
 		}
+		makeHierarchy();
 		printTestMatched(matchedCount);
 		return null;
 	}
@@ -111,51 +113,35 @@ public class TermOntologyMatcher {
 		matches.add(relation);
 	}
 
+	public void makeHierarchy() {
+		for (int i = 1; i < matches.size(); i++) {
+			MatchedTerm relation2 = matches.get(i);
+			MatchedTerm relation = matches.get(i - 1);
+			String parent = relation2.getParent().getTerm();
+
+			for (int j = 0; j < relation.getChilds().size(); j++) {
+				if (parent.toLowerCase().equals(
+						relation.getChilds().get(j).getTerm().toLowerCase())) {
+					relation.getChilds().get(j)
+							.setChilds(relation2.getChilds());
+					matches.remove(relation2);
+				}
+			}
+		}
+	}
+
 	public void printTestMatched(int matchedCount) {
 		String results = "results.txt";
 		log.info("matched [" + matchedCount + "]");
 		FileWriter fw = null;
-		StringBuilder sb = new StringBuilder();
+
 		try {
 			fw = new FileWriter(new File(results));
-			sb.append("{\"matched\":[");
-			for (int i = 0; i < matches.size(); i++) {
-				MatchedTerm relation = matches.get(i);
-				sb.append("{\"parent\":\"" + relation.getParent().getTerm()
-						+ "\"");
-				sb.append(",\"childs\":[");
-				int numChilds = relation.getChilds().size();
-				for (int j = 0; j < numChilds; j++) {
-					Term child = relation.getChilds().get(j);
-					sb.append("{");
-					sb.append("\"term\":\"" + child.getTerm() + "\",");
-					sb.append("\"title\":\"" + child.getTitle() + "\",");
-					sb.append("\"description\":\"...\",");
-					sb.append("\"tags\":\"" + child.getTags() + "\",");
-					sb.append("\"frequency\":\"" + child.getFrequency() + "\",");
-					sb.append("\"overAllFrequency\":\""
-							+ child.getOverAllFrequency() + "\"");
-					sb.append("}");
-					if (j < (numChilds - 1)) {
-						sb.append(",");
-					}
-				}
-				sb.append("]}");
-				if (i < (matches.size() - 1)) {
-					sb.append(",");
-				}
-			}
-			sb.append("],\"not_matched\":[");
+
 			int unmatchedCount = not_matched.size();
-			for (int i = 0; i < unmatchedCount; i++) {
-				String comma = ",";
-				if (i == unmatchedCount - 1) {
-					comma = "";
-				}
-				sb.append("\"" + not_matched.get(i) + "\"" + comma);
-			}
-			sb.append("]}");
-			fw.write(sb.toString());
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.writeValue(fw, matches);
 			fw.close();
 
 			float total = matchedCount + unmatchedCount;
