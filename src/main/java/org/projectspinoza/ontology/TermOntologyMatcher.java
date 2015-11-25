@@ -66,7 +66,7 @@ public class TermOntologyMatcher {
 			}
 		}
 		makeHierarchy();
-		printTestMatched(matchedCount,not_matched.size());
+		printTestMatched(matchedCount, not_matched.size());
 		return null;
 	}
 
@@ -96,8 +96,7 @@ public class TermOntologyMatcher {
 
 	public void addToRelation(String term, Map<String, String> ontology) {
 		for (int i = 0; i < matches.size(); i++) {
-			if (matches.get(i).getTerm()
-					.equals(ontology.get("Parent").trim())) {
+			if (matches.get(i).getTerm().equals(ontology.get("Parent").trim())) {
 				matches.get(i).addChild(
 						new Term(term, ontology.get("Title"), ontology.get(
 								"Body").replaceAll("[\r\n]+", ""), ontology
@@ -105,25 +104,30 @@ public class TermOntologyMatcher {
 				return;
 			}
 		}
-		Term relation =new Term(ontology.get("Parent")
-				.trim());
+		Term relation = new Term(ontology.get("Parent").trim());
 		relation.addChild(new Term(term, ontology.get("Title"), ontology.get(
 				"Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
 		matches.add(relation);
 	}
 
 	public void makeHierarchy() {
-		for (int i = 1; i < matches.size(); i++) {
-			Term relation2 = matches.get(i);
-			Term relation = matches.get(i - 1);
-			String parent = relation2.getTerm();
-
-			for (int j = 0; j < relation.getChilds().size(); j++) {
-				if (parent.toLowerCase().equals(
-						relation.getChilds().get(j).getTerm().toLowerCase())) {
-					relation.getChilds().get(j)
-							.setChilds(relation2.getChilds());
-					matches.remove(relation2);
+		int finalMatches = matches.size();
+		for (int i = 0; i < finalMatches; i++) {
+			Term relation = matches.get(i);
+			String parent = relation.getTerm().toLowerCase();
+			for (int k = 0; k < finalMatches; k++) {
+				if (k != i) {
+					Term relation2 = matches.get(k);
+					
+					for (int j = 0; j < relation2.getChilds().size(); j++) {
+						if (parent.equals(relation2.getChilds().get(j).getTerm()
+										.toLowerCase())) {
+							relation2.getChilds().get(j)
+									.setChilds(relation.getChilds());
+							matches.remove(relation);
+							finalMatches--;
+						}
+					}
 				}
 			}
 		}
