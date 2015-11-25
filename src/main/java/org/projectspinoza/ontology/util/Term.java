@@ -1,13 +1,15 @@
 package org.projectspinoza.ontology.util;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class Term {
 	
 	private String title;
 	private String term;
 	private String tags;
-	private String description;
+	private String description = null;
 	private int frequency = 1;
 	private int overAllFrequency = 1;
 	private List<Term> childs;
@@ -19,7 +21,7 @@ public class Term {
 	public Term(String term, String title, String description, String tags){
 		this.term = term;
 		this.title = title;
-		this.description = description;
+		//this.description = description;
 		this.tags = tags;
 	}
 	public List<Term> getChilds() {
@@ -28,6 +30,7 @@ public class Term {
 	public void setChilds(List<Term> childs) {
 		this.childs = childs;
 	}
+	
 	public String getTags(){
 		return this.tags;
 	}
@@ -67,6 +70,26 @@ public class Term {
 	public void incrementoverAllFrequency(){
 		overAllFrequency++;
 	}
+	
+	public void addChild(Term child) {
+		if (childs == null) {
+			childs = new ArrayList<Term>();
+		}
+		if (!contains(child)) {
+			childs.add(child);
+		}
+	}
+	
+	public boolean contains(Term child) {
+		for (Term oldChild : childs) {
+			if (oldChild.getTerm().equalsIgnoreCase(child.getTerm())) {
+				oldChild.incrementFrequency();
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString(){
 		return "term["+term+"], title["+title+"], description[...], frequency["+frequency+"], overallFrequency["+overAllFrequency+"]";

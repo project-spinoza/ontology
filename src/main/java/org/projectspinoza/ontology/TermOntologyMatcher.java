@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.projectspinoza.ontology.util.DataLoader;
-import org.projectspinoza.ontology.util.MatchedTerm;
 import org.projectspinoza.ontology.util.Term;
 
 public class TermOntologyMatcher {
@@ -19,7 +18,7 @@ public class TermOntologyMatcher {
 
 	private String tweetsPath;
 	private String ontologiesPath;
-	private List<MatchedTerm> matches;
+	private List<Term> matches;
 	public List<String> not_matched;
 
 	public TermOntologyMatcher() {
@@ -31,12 +30,12 @@ public class TermOntologyMatcher {
 		not_matched = new ArrayList<String>();
 	}
 
-	public List<MatchedTerm> matchTerms() {
+	public List<Term> matchTerms() {
 		int matchedCount = 0;
 		List<String> tweetTags = DataLoader.fetchTags(tweetsPath);
 		List<Map<String, String>> ontologies = DataLoader
 				.fetchOntologies(ontologiesPath);
-		matches = new ArrayList<MatchedTerm>();
+		matches = new ArrayList<Term>();
 		for (String tag : tweetTags) {
 			int rootCounter = 0;
 			for (Map<String, String> ontology : ontologies) {
@@ -67,7 +66,7 @@ public class TermOntologyMatcher {
 			}
 		}
 		makeHierarchy();
-		printTestMatched(matchedCount);
+		printTestMatched(matchedCount,not_matched.size());
 		return null;
 	}
 
@@ -87,17 +86,17 @@ public class TermOntologyMatcher {
 		this.ontologiesPath = ontologiesPath;
 	}
 
-	public List<MatchedTerm> getMatches() {
+	public List<Term> getMatches() {
 		return matches;
 	}
 
-	public void setMatches(List<MatchedTerm> matches) {
+	public void setMatches(List<Term> matches) {
 		this.matches = matches;
 	}
 
 	public void addToRelation(String term, Map<String, String> ontology) {
 		for (int i = 0; i < matches.size(); i++) {
-			if (matches.get(i).getParent().getTerm()
+			if (matches.get(i).getTerm()
 					.equals(ontology.get("Parent").trim())) {
 				matches.get(i).addChild(
 						new Term(term, ontology.get("Title"), ontology.get(
@@ -106,8 +105,8 @@ public class TermOntologyMatcher {
 				return;
 			}
 		}
-		MatchedTerm relation = new MatchedTerm(new Term(ontology.get("Parent")
-				.trim()));
+		Term relation =new Term(ontology.get("Parent")
+				.trim());
 		relation.addChild(new Term(term, ontology.get("Title"), ontology.get(
 				"Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
 		matches.add(relation);
@@ -115,9 +114,9 @@ public class TermOntologyMatcher {
 
 	public void makeHierarchy() {
 		for (int i = 1; i < matches.size(); i++) {
-			MatchedTerm relation2 = matches.get(i);
-			MatchedTerm relation = matches.get(i - 1);
-			String parent = relation2.getParent().getTerm();
+			Term relation2 = matches.get(i);
+			Term relation = matches.get(i - 1);
+			String parent = relation2.getTerm();
 
 			for (int j = 0; j < relation.getChilds().size(); j++) {
 				if (parent.toLowerCase().equals(
@@ -130,16 +129,13 @@ public class TermOntologyMatcher {
 		}
 	}
 
-	public void printTestMatched(int matchedCount) {
+	public void printTestMatched(int matchedCount, int unmatchedCount) {
 		String results = "results.txt";
 		log.info("matched [" + matchedCount + "]");
 		FileWriter fw = null;
 
 		try {
 			fw = new FileWriter(new File(results));
-
-			int unmatchedCount = not_matched.size();
-
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.writeValue(fw, matches);
 			fw.close();
