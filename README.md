@@ -26,4 +26,4 @@ This catogry is about Political parties and thier detials like Names, Governors,
 
 This cateogry is about Sports team like American football, Badminton, Baseball, Basketball, Cricket, Field hockey, Golf, Ice Hockey, Rugby football, Soccer, Table Tennis, Tennis and VolleyBall.
 
-[Documentation](Setup)
+[Documentation](https://github.com/project-spinoza/ontology/wiki/Setup)
