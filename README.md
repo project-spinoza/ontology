@@ -14,6 +14,8 @@ Navigate to the ontology directory and run the following command
 Run the following command from the root directory
 
 `java -jar target/ontology-v1.0-jar-with-dependencies.jar tweets.txt ontologies.json`
+<b>Note:</b>
+<li>You can replace `tweets.txt` with the file containing one tweet per line</li>
 
 #### Result
 The final result will be stored in `results.txt` file, at root directory of project. 
