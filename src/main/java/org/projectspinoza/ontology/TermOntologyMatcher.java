@@ -20,10 +20,30 @@ public class TermOntologyMatcher {
 	private String ontologiesPath;
 	private List<Term> matches;
 	public List<String> not_matched;
-
-	public TermOntologyMatcher() {
+	
+	public String getTweetsPath() {
+		return tweetsPath;
+	}
+	public void setTweetsPath(String tweetsPath) {
+		this.tweetsPath = tweetsPath;
 	}
 
+	public String getOntologiesPath() {
+		return ontologiesPath;
+	}
+	public void setOntologiesPath(String ontologiesPath) {
+		this.ontologiesPath = ontologiesPath;
+	}
+
+	public List<Term> getMatches() {
+		return matches;
+	}
+	public void setMatches(List<Term> matches) {
+		this.matches = matches;
+	}
+	
+	public TermOntologyMatcher() {
+	}
 	public TermOntologyMatcher(String tweetsPath, String ontologiesPath) {
 		this.tweetsPath = tweetsPath;
 		this.ontologiesPath = ontologiesPath;
@@ -70,30 +90,6 @@ public class TermOntologyMatcher {
 		return null;
 	}
 
-	public String getTweetsPath() {
-		return tweetsPath;
-	}
-
-	public void setTweetsPath(String tweetsPath) {
-		this.tweetsPath = tweetsPath;
-	}
-
-	public String getOntologiesPath() {
-		return ontologiesPath;
-	}
-
-	public void setOntologiesPath(String ontologiesPath) {
-		this.ontologiesPath = ontologiesPath;
-	}
-
-	public List<Term> getMatches() {
-		return matches;
-	}
-
-	public void setMatches(List<Term> matches) {
-		this.matches = matches;
-	}
-
 	public void addToRelation(String term, Map<String, String> ontology) {
 		for (int i = 0; i < matches.size(); i++) {
 			if (matches.get(i).getTerm().equals(ontology.get("Parent").trim())) {
@@ -118,7 +114,6 @@ public class TermOntologyMatcher {
 			for (int k = 0; k < finalMatches; k++) {
 				if (k != i) {
 					Term relation2 = matches.get(k);
-					
 					for (int j = 0; j < relation2.getChilds().size(); j++) {
 						if (parent.equals(relation2.getChilds().get(j).getTerm()
 										.toLowerCase())) {
