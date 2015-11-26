@@ -1,6 +1,6 @@
 # Ontology
 
-### Usage
+## Usage
 
 #### Download zip or Clone it using the following command
 
