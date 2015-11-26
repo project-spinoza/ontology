@@ -1,24 +1,29 @@
 # Ontology
 
-## Usage
+Ontology is a collection of hierarchal data, collected from different sources. This data can be used for different purposes. Like analyzing tweets and against ontologies. Data is mainly categorized into following categories.
 
-#### Download zip or Clone it using the following command
+### Car
 
-`git clone https://github.com/project-spinoza/ontology.git`
-#### How to build the application
+This category is about Car brands including its detail like Brand name, Logos, Links etc.
 
-Navigate to the ontology directory and run the following command
+### Data science
 
-`mvn clean package`
-#### Running the application
-Run the following command from the root directory
+This category is about Data science and its details like Elastic Map Reduce, Graph Databases, Information visualization and NoSql databses.
 
-`java -jar target/ontology-v1.0-jar-with-dependencies.jar tweets.txt ontologies.json` <br><br>
-<b>Note:</b>
-<li>You can replace `tweets.txt` with the file containing one tweet per line</li>
+### Lifestyle
 
-#### Result
-The final result will be stored in `results.txt` file, at root directory of project. 
+This category is about Lifestyle interests, opinions and culture. For example Cinemas, Clothing, Eateries, Eyewear, Gyms, Jewelry, Shoes, Shopping mall, Soft Drinks, Sweets, Watches and Wines.
 
+### Newspaper
 
+This category is about different Blogs, Magazines ,Newspaper and Tabloid.
 
+### Politics
+
+This catogry is about Political parties and thier detials like Names, Governors, Senators etc.
+
+### Sports team
+
+This cateogry is about Sports team like American football, Badminton, Baseball, Basketball, Cricket, Field hockey, Golf, Ice Hockey, Rugby football, Soccer, Table Tennis, Tennis and VolleyBall.
+
+[Documentation](Setup)
