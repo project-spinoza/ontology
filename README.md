@@ -16,7 +16,7 @@ Run the following command from the root directory
 `java -jar target/ontology-v1.0-jar-with-dependencies.jar tweets.txt ontologies.json`
 
 #### Result
-The final result will be stored in `results.txt` file, at root directory of project 
+The final result will be stored in `results.txt` file, at root directory of project. 
 
 
 
