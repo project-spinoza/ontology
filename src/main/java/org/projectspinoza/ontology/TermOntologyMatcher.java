@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,8 +17,8 @@ public class TermOntologyMatcher {
 
 	private String tweetsPath;
 	private String ontologiesPath;
-	private List<Term> matches;
-	public List<String> not_matched;
+	private List<Term> matched;
+	public List<String> unmatched;
 	
 	public String getTweetsPath() {
 		return tweetsPath;
@@ -36,10 +35,10 @@ public class TermOntologyMatcher {
 	}
 
 	public List<Term> getMatches() {
-		return matches;
+		return matched;
 	}
 	public void setMatches(List<Term> matches) {
-		this.matches = matches;
+		this.matched = matches;
 	}
 	
 	public TermOntologyMatcher() {
@@ -47,7 +46,7 @@ public class TermOntologyMatcher {
 	public TermOntologyMatcher(String tweetsPath, String ontologiesPath) {
 		this.tweetsPath = tweetsPath;
 		this.ontologiesPath = ontologiesPath;
-		not_matched = new ArrayList<String>();
+		unmatched = new ArrayList<String>();
 	}
 
 	public List<Term> matchTerms() {
@@ -55,7 +54,7 @@ public class TermOntologyMatcher {
 		List<String> tweetTags = DataLoader.fetchTags(tweetsPath);
 		List<Map<String, String>> ontologies = DataLoader
 				.fetchOntologies(ontologiesPath);
-		matches = new ArrayList<Term>();
+		matched = new ArrayList<Term>();
 		for (String tag : tweetTags) {
 			int rootCounter = 0;
 			for (Map<String, String> ontology : ontologies) {
@@ -71,29 +70,29 @@ public class TermOntologyMatcher {
 			}
 			log.debug(tag + ", matched " + rootCounter + " times");
 
-			for (int i = 0; i < matches.size(); i++) {
-				for (int j = 0; j < matches.get(i).getChilds().size(); j++) {
-					if (matches.get(i).getChilds().get(j).getTerm().equals(tag)) {
-						matches.get(i).getChilds().get(j)
+			for (int i = 0; i < matched.size(); i++) {
+				for (int j = 0; j < matched.get(i).getChilds().size(); j++) {
+					if (matched.get(i).getChilds().get(j).getTerm().equals(tag)) {
+					    matched.get(i).getChilds().get(j)
 								.setOverAllFrequency(rootCounter);
 					}
 				}
 			}
 			if (rootCounter == 0) {
-				not_matched.add(tag);
+			    unmatched.add(tag);
 			} else {
 				matchedCount++;
 			}
 		}
 		makeHierarchy();
-		printTestMatched(matchedCount, not_matched.size());
+		printTestMatched(matchedCount, unmatched.size());
 		return null;
 	}
 
 	public void addToRelation(String term, Map<String, String> ontology) {
-		for (int i = 0; i < matches.size(); i++) {
-			if (matches.get(i).getTerm().equals(ontology.get("Parent").trim())) {
-				matches.get(i).addChild(
+		for (int i = 0; i < matched.size(); i++) {
+			if (matched.get(i).getTerm().equals(ontology.get("Parent").trim())) {
+			    matched.get(i).addChild(
 						new Term(term, ontology.get("Title"), ontology.get(
 								"Body").replaceAll("[\r\n]+", ""), ontology
 								.get("Tag")));
@@ -103,23 +102,23 @@ public class TermOntologyMatcher {
 		Term relation = new Term(ontology.get("Parent").trim());
 		relation.addChild(new Term(term, ontology.get("Title"), ontology.get(
 				"Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
-		matches.add(relation);
+		matched.add(relation);
 	}
 
 	public void makeHierarchy() {
-		int finalMatches = matches.size();
+		int finalMatches = matched.size();
 		for (int i = 0; i < finalMatches; i++) {
-			Term relation = matches.get(i);
+			Term relation = matched.get(i);
 			String parent = relation.getTerm().toLowerCase();
 			for (int k = 0; k < finalMatches; k++) {
 				if (k != i) {
-					Term relation2 = matches.get(k);
+					Term relation2 = matched.get(k);
 					for (int j = 0; j < relation2.getChilds().size(); j++) {
 						if (parent.equals(relation2.getChilds().get(j).getTerm()
 										.toLowerCase())) {
 							relation2.getChilds().get(j)
 									.setChilds(relation.getChilds());
-							matches.remove(relation);
+							matched.remove(relation);
 							finalMatches--;
 						}
 					}
@@ -136,7 +135,7 @@ public class TermOntologyMatcher {
 		try {
 			fw = new FileWriter(new File(results));
 			ObjectMapper mapper = new ObjectMapper();
-			mapper.writeValue(fw, matches);
+			mapper.writeValue(fw, matched);
 			fw.close();
 
 			float total = matchedCount + unmatchedCount;
