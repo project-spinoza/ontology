@@ -21,7 +21,8 @@ public class Term {
 	public Term(String term, String title, String description, String tags){
 		this.term = term;
 		this.title = title;
-		//this.description = description;
+		/* minizing description */
+		this.description = description.substring(0, 32)+"...";
 		this.tags = tags;
 	}
 	public List<Term> getChilds() {
