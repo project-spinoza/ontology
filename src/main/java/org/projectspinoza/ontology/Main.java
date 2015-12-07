@@ -12,7 +12,7 @@ public class Main {
             System.exit(0);
         }
         log.info("Initializing ontologies!");
-        (new TermOntologyMatcher(args[0], args[1])).matchTerms();
+        (new TermOntologyMatcher(args[0], args[1])).start();
         log.info("Done!");
     }
 }
