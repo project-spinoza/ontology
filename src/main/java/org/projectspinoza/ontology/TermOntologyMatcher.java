@@ -36,7 +36,7 @@ public class TermOntologyMatcher {
         this.ontologiesPath = ontologiesPath;
     }
 
-    public TermOntologyMatcher() {
+        public TermOntologyMatcher() {
     }
 
     public TermOntologyMatcher(String tweetsFilePath, String ontologiesFilePath) {
@@ -76,12 +76,12 @@ public class TermOntologyMatcher {
             }
             log.debug(tag + ", matched " + rootCounter + " times");
 
-            for (int i = 0; i < matched.size(); i++) {
-                for (int j = 0; j < matched.get(i).getChilds().size(); j++) {
-                    if (matched.get(i).getChilds().get(j).getTerm().equals(tag)) {
-                        matched.get(i).getChilds().get(j)
-                                .setOverAllFrequency(rootCounter);
-                    }
+            //for (int i = 0; i < matched.size(); i++) {
+            for (Term term:  matched) {
+                int childIndex = -1;
+                if (( childIndex = getMatchedChildIndex(term.getChilds(),tag)) !=  -1) {
+                    term.getChilds().get(childIndex)
+                            .setOverAllFrequency(rootCounter);
                 }
             }
             if (rootCounter == 0) {
@@ -93,6 +93,14 @@ public class TermOntologyMatcher {
         matchTermResult.put("unMatched", unMatched);
 
         return matchTermResult;
+    }
+    public int getMatchedChildIndex(List<Term> childs, String tag){
+        for (int j = 0; j < childs.size(); j++) {
+            if (childs.get(j).getTerm().equals(tag)) {
+               return j;
+            }
+        }
+        return -1;
     }
 
     public List<Term> addToRelation(String term, Map<String, String> ontology,
@@ -115,6 +123,7 @@ public class TermOntologyMatcher {
     public List<Term> finalHierarchy(List<Term> matchedTerms) {
         int matchedTermsSize = matchedTerms.size();
         for (int i = 0; i < matchedTermsSize; i++) {
+ //       for(Term relation : matchedTerms){
             Term relation = matchedTerms.get(i);
             String parent = relation.getTerm().toLowerCase();
             for (int k = 0; k < matchedTermsSize; k++) {

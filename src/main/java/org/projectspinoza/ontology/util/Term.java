@@ -24,7 +24,11 @@ public class Term {
         this.term = term;
         this.title = title;
         /* minizing description */
+        if(description.length()> 32){
         this.description = description.substring(0, 32) + "...";
+        }else{
+            this.description = description;
+        }
         this.tags = tags;
     }
 
