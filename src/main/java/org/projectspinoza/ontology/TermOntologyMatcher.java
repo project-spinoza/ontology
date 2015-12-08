@@ -36,7 +36,7 @@ public class TermOntologyMatcher {
         this.ontologiesPath = ontologiesPath;
     }
 
-        public TermOntologyMatcher() {
+    public TermOntologyMatcher() {
     }
 
     public TermOntologyMatcher(String tweetsFilePath, String ontologiesFilePath) {
@@ -58,15 +58,16 @@ public class TermOntologyMatcher {
         List<Term> matched = new ArrayList<Term>();
         List<String> unMatched = new ArrayList<String>();
         Map<String, Object> matchTermResult = new HashMap<String, Object>();
-        List<String> tweetTags = DataLoader.fetchTags(tweeetsfile);
-        List<Map<String, String>> ontologies = DataLoader.fetchOntologies(ontologiesfile);
         
+        List<String> tweetTags = DataLoader.fetchTags(tweeetsfile);
+        List<Map<String, String>> ontologies = DataLoader
+                .fetchOntologies(ontologiesfile);
+
         for (String tag : tweetTags) {
             int rootCounter = 0;
             for (Map<String, String> ontology : ontologies) {
                 String ontoTagsString = ontology.get("Tag").toLowerCase();
-                String[] ontoTags = ontoTagsString.replaceAll(" ", "").split(
-                        ",");
+                String[] ontoTags = ontoTagsString.replaceAll(" ", "").split(",");
                 for (String ontoTag : ontoTags) {
                     if (ontoTag.equals(tag)) {
                         rootCounter++;
@@ -75,29 +76,26 @@ public class TermOntologyMatcher {
                 }
             }
             log.debug(tag + ", matched " + rootCounter + " times");
-
-            //for (int i = 0; i < matched.size(); i++) {
-            for (Term term:  matched) {
+            for (Term term : matched) {
                 int childIndex = -1;
-                if (( childIndex = getMatchedChildIndex(term.getChilds(),tag)) !=  -1) {
-                    term.getChilds().get(childIndex)
-                            .setOverAllFrequency(rootCounter);
+                if ((childIndex = getMatchedChildIndex(term.getChilds(), tag)) != -1) {
+                    term.getChilds().get(childIndex).setOverAllFrequency(rootCounter);
                 }
             }
             if (rootCounter == 0) {
                 unMatched.add(tag);
             }
-
         }
         matchTermResult.put("matched", matched);
         matchTermResult.put("unMatched", unMatched);
 
         return matchTermResult;
     }
-    public int getMatchedChildIndex(List<Term> childs, String tag){
+
+    public int getMatchedChildIndex(List<Term> childs, String tag) {
         for (int j = 0; j < childs.size(); j++) {
             if (childs.get(j).getTerm().equals(tag)) {
-               return j;
+                return j;
             }
         }
         return -1;
@@ -107,7 +105,7 @@ public class TermOntologyMatcher {
             List<Term> matchedTerms) {
         for (int i = 0; i < matchedTerms.size(); i++) {
             if (matchedTerms.get(i).getTerm().equals(ontology.get("Parent").trim())) {
-                matchedTerms.get(i).addChild( new Term(term, ontology.get("Title"), ontology.get(
+                matchedTerms.get(i).addChild(new Term(term, ontology.get("Title"), ontology.get(
                                 "Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
                 return matchedTerms;
             }
@@ -116,24 +114,23 @@ public class TermOntologyMatcher {
         relation.addChild(new Term(term, ontology.get("Title"), ontology.get(
                 "Body").replaceAll("[\r\n]+", ""), ontology.get("Tag")));
         matchedTerms.add(relation);
-        
+
         return matchedTerms;
     }
 
     public List<Term> finalHierarchy(List<Term> matchedTerms) {
-        int matchedTermsSize = matchedTerms.size();
-        for (int i = 0; i < matchedTermsSize; i++) {
- //       for(Term relation : matchedTerms){
+
+        for (int i = 0; i < matchedTerms.size(); i++) {
             Term relation = matchedTerms.get(i);
             String parent = relation.getTerm().toLowerCase();
-            for (int k = 0; k < matchedTermsSize; k++) {
+            for (int k = 0; k < matchedTerms.size(); k++) {
                 if (k != i) {
-                    Term relation2 = matchedTerms.get(k);
-                    for (int j = 0; j < relation2.getChilds().size(); j++) {
-                        if (parent.equals(relation2.getChilds().get(j).getTerm().toLowerCase())) {
-                            relation2.getChilds().get(j).setChilds(relation.getChilds());
+                    Term nextRelation = matchedTerms.get(k);
+                    for (int j = 0; j < nextRelation.getChilds().size(); j++) {
+                        if (parent.equals(nextRelation.getChilds().get(j)
+                                .getTerm().toLowerCase())) {
+                            nextRelation.getChilds().get(j).setChilds(relation.getChilds());
                             matchedTerms.remove(relation);
-                            matchedTermsSize--;
                         }
                     }
                 }
@@ -142,7 +139,8 @@ public class TermOntologyMatcher {
         return matchedTerms;
     }
 
-    public void printTestMatched(List<Term> matchTerms,List<String> unMatchTerms) {
+    public void printTestMatched(List<Term> matchTerms,
+            List<String> unMatchTerms) {
 
         int matchedCount = matchTerms.size();
         int unMatchedCount = unMatchTerms.size();
@@ -152,15 +150,13 @@ public class TermOntologyMatcher {
         try {
             fw = new FileWriter(new File("results.txt"));
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(fw, matchTerms);
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("matched", matchTerms);
+            map.put("unmatched", unMatchTerms);
+            mapper.writeValue(fw, map);
             fw.close();
 
-            float total = matchedCount + unMatchedCount;
-            float percentage = 0.0F;
-            if (total != 0) {
-                percentage = ((matchedCount * 100.0F) / total);
-                log.info(String.format("%.2f", percentage) + "% tags matched");
-            }
+            log.info(percentage(matchedCount,unMatchedCount) + "% tags matched");
             log.info("Results are stored in result file");
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -173,5 +169,14 @@ public class TermOntologyMatcher {
                 ex.printStackTrace();
             }
         }
+    }
+    
+    public String percentage(int matched, int unMatched){
+        float total = matched + unMatched;
+        float percentage = 0.0F;
+        if (total != 0) {
+            percentage = ((matched * 100.0F) / total);
+        }
+         return String.format("%.2f",percentage);
     }
 }
