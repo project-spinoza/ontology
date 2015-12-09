@@ -102,8 +102,7 @@ public class DataLoader {
         ObjectMapper mapper = new ObjectMapper();
         try {
             ontologies = mapper.readValue(json,
-                    new TypeReference<ArrayList<Map<String, String>>>() {
-                    });
+                    new TypeReference<ArrayList<Map<String, String>>>() {});
             log.info("Ontologies Loaded [" + ontologies.size() + "]");
         } catch (Exception e) {
             log.error("Cannot fetch ontologies from [" + filePath);
