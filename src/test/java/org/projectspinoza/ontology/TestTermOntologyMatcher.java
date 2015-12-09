@@ -25,24 +25,44 @@ public class TestTermOntologyMatcher {
 	TermOntologyMatcher tm = new TermOntologyMatcher("tweets.txt",
 			"ontologies.json");
 	List<String> tweetTags = new ArrayList<String>();
+	Map<String, String> ontology = new HashMap<String, String>();
 	List<Map<String, String>> ontologies = new ArrayList<Map<String, String>>();
 
 	@Before
 	public void setup() {
+		
 		PowerMockito.mockStatic(DataLoader.class);
-
 		tweetTags.add("car");
 		tweetTags.add("2014rlx");
 		tweetTags.add("acura");
 
-		Map<String, String> ontologyMap = new HashMap<String, String>();
-		ontologyMap.put("Title", "Hartley Brody");
-		ontologyMap.put("Tag", "technology, Sports, car, acura, hartleybrody");
-		ontologyMap.put("Body", "This is technology");
-		ontologyMap.put("Parent", "Technology");
-		ontologies.add(ontologyMap);
+		ontology.put("Title", "Hartley Brody");
+		ontology.put("Tag", "technology, Sports, car, acura, hartleybrody");
+		ontology.put("Body", "This is technology");
+		ontology.put("Parent", "Technology");
+		ontologies.add(ontology);
 
 		term = new Term("Technology");
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void TestaddToRelation(){
+		List<Term> expected = new ArrayList<Term>();
+		expected.add(term);
+		List<Term> matches = (List<Term>) tm.matchTerms("tweets.txt",
+				"ontologies.json").get("matched");
+		List<Term> result = tm.addToRelation("technology", ontology, matches);
+		
+		assertEquals(expected.get(0).getTitle(), result.get(0).getTitle());
+		assertEquals(expected.get(0).getTerm(), result.get(0).getTerm());
+		assertEquals(expected.get(0).getDescription(), result.get(0)
+				.getDescription());
+		assertEquals(expected.get(0).getFrequency(), result.get(0)
+				.getFrequency());
+		assertEquals(expected.get(0).getOverAllFrequency(), result.get(0)
+				.getOverAllFrequency());
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -56,9 +76,7 @@ public class TestTermOntologyMatcher {
 				.thenReturn(ontologies);
 		List<Term> result = (List<Term>) tm.matchTerms("tweets.txt",
 				"ontologies.json").get("matched");
-		List<String> unmatch = (List<String>) tm.matchTerms("tweets.txt",
-				"ontologies.json").get("unMatched");
-		System.out.println(unmatch);
+		
 		assertEquals(expected.get(0).getTitle(), result.get(0).getTitle());
 		assertEquals(expected.get(0).getTerm(), result.get(0).getTerm());
 		assertEquals(expected.get(0).getDescription(), result.get(0)
@@ -86,4 +104,5 @@ public class TestTermOntologyMatcher {
 		assertEquals(expected, result);
 
 	}
+	
 }
