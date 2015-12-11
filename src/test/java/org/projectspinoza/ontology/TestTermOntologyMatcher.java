@@ -70,8 +70,7 @@ public class TestTermOntologyMatcher {
 	public void TestMatchTerms() {
 		List<Term> expected = new ArrayList<Term>();
 		expected.add(term);
-		PowerMockito.when(DataLoader.fetchTags("tweets.txt")).thenReturn(
-				tweetTags);
+		PowerMockito.when(DataLoader.fetchTags("tweets.txt")).thenReturn(tweetTags);
 		PowerMockito.when(DataLoader.fetchOntologies("ontologies.json"))
 				.thenReturn(ontologies);
 		List<Term> result = (List<Term>) tm.matchTerms("tweets.txt",
@@ -93,10 +92,8 @@ public class TestTermOntologyMatcher {
 	public void TestUnMatchTerms() {
 		List<String> expected = new ArrayList<String>();
 		expected.add("2014rlx");
-		PowerMockito.when(DataLoader.fetchTags("tweets.txt")).thenReturn(
-				tweetTags);
-		PowerMockito.when(DataLoader.fetchOntologies("ontologies.json"))
-				.thenReturn(ontologies);
+		PowerMockito.when(DataLoader.fetchTags("tweets.txt")).thenReturn(tweetTags);
+		PowerMockito.when(DataLoader.fetchOntologies("ontologies.json")).thenReturn(ontologies);
 
 		List<String> result = (List<String>) tm.matchTerms("tweets.txt",
 				"ontologies.json").get("unMatched");
