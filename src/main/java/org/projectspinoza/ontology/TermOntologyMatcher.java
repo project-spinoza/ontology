@@ -47,10 +47,10 @@ public class TermOntologyMatcher {
     @SuppressWarnings("unchecked")
     public void start() {
         Map<String, Object> resultTerms = matchTerms(tweetsPath, ontologiesPath);
-        System.out.println(resultTerms);
         List<Term> earlyMatchedTerms = (List<Term>) resultTerms.get("matched");
         List<String> unMatchedTerms = (List<String>) resultTerms.get("unMatched");
         List<Term> hieraricalTerms = finalHierarchy(earlyMatchedTerms);
+        
         printTestMatched(hieraricalTerms, unMatchedTerms);
     }
 
